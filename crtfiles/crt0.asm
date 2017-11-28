@@ -13,4 +13,6 @@ call _init ;global constructors
 
 call _main ;main function
 
-call _exit_crt
+pop eax ;get return code
+out 0xF0, eax ; VM escape API for ending execution
+hlt

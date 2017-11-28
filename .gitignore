@@ -1,0 +1,3 @@
+sysroot
+crtfiles/*.o
+binutils-*/ld/autom4te.cache/
