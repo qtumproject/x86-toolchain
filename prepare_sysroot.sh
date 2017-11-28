@@ -4,8 +4,8 @@ cd crtfiles
 make
 cd ..
 
-mkdir -p sysroot/lib
-mkdir -p sysroot/include
+mkdir -p sysroot/usr/lib
+mkdir -p sysroot/usr/include
 
-cp crtfiles/*.o sysroot/lib/
+cp crtfiles/*.o sysroot/usr/lib/
 
