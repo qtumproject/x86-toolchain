@@ -9,3 +9,5 @@ mkdir -p sysroot/usr/include
 
 cp crtfiles/*.o sysroot/usr/lib/
 
+cp -r includes/* sysroot/usr/include/
+
