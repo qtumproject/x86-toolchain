@@ -295,6 +295,7 @@ ALL_EMULATION_SOURCES = \
 	eelf_i386_nacl.c \
 	eelf_i386_sol2.c \
 	eelf_i386_vxworks.c \
+	eelf_i386_qtum.c \
 	eelf_iamcu.c \
 	eelf_s390.c \
 	egld960.c \
@@ -1370,6 +1371,10 @@ eelf_i386_sol2.c: $(srcdir)/emulparams/elf_i386_sol2.sh \
 eelf_i386_vxworks.c: $(srcdir)/emulparams/elf_i386_vxworks.sh \
   $(srcdir)/emulparams/vxworks.sh $(srcdir)/emultempl/vxworks.em \
   $(ELF_DEPS) $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
+
+eelf_i386_qtum.c: $(srcdir)/emulparams/elf_i386_qtum.sh \
+  $(ELF_DEPS) $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
+	${GENSCRIPTS} elf_i386_qtum "$(tdir_elf_i386_qtum)"
 
 eelf_iamcu.c: $(srcdir)/emulparams/elf_iamcu.sh \
   $(ELF_X86_DEPS) $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
