@@ -4,13 +4,15 @@
  
 /* Default arguments you want when running your
    i686-myos-gcc/x86_64-myos-gcc toolchain */
-#define LIB_SPEC "-lc" /* link against C standard library */
+#define LIB_SPEC "-lfslc -lqtum" /* link against C standard library */
  
 /* Files that are linked before user code.
    The %s tells GCC to look for these files in the library directory. */
+#undef STARTFILE_SPEC
 #define STARTFILE_SPEC "crt0.o%s crti.o%s crtbegin.o%s"
  
 /* Files that are linked after user code. */
+#undef ENDFILE_SPEC
 #define ENDFILE_SPEC "crtend.o%s crtn.o%s"
  
 /* Don't automatically add extern "C" { } around header files. */
