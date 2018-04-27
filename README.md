@@ -18,26 +18,91 @@ Resources:
 
 ## Building It
 
-First of all, if building from scratch you will first need to build a freestanding i386 compiler. This is a compiler that makes no assumptions about it's operating environment and is normally used for kernel and operating system development. In our case, we only need the i386 compiler to initially bootstrap the environment required to later build. After we have built our libc, we can compile i386-qtum-gcc and then use it for libc compilation.
+The requirements for building the QtumOS compiler is:
 
-Follow this guide to build a freestanding compiler. Make sure to use the target i386-elf and not i686-elf, since x86Lib doesn't yet support all i686 opcodes (or i386 for that matter.. but anyway)
+* GCC sources
+* pre-compiled minimal version of libc
+* pre-compiled minimal version fo libqtum
+* "sysroot" properly constructed with crt files assembled
 
-Once you get to the point that you can run i386-elf-gcc, you are ready to build our libc. Right now our libc is built from a fork from an open source project. This provides all of the required functions to compile libgcc (which is thus required to compile GCC itself). To build our libc:
+In order to compile the minimal versions of libc, a freestanding generic compiler is required. This can be built as so:
+
+    #!/bin/bash
+    export PREFIX="$HOME/opt/cross"
+    export TARGET=i386-elf
+    export PATH="$PREFIX/bin:$PATH"
+    export SYSROOT="$HOME/x86-compiler/sysroot" #change if needed
+
+    mkdir build-binutils
+    cd build-binutils
+    ../binutils-2.29/configure --target="$TARGET" --prefix="$PREFIX" --disable-werror
+    make
+    make install
+    cd ..
+    mkdir build-gcc
+    cd build-gcc
+    ../gcc-7.2.0/configure --target="$TARGET" --prefix="$PREFIX" --enable-languages=c
+    make all-gcc
+    make all-target-libgcc
+    make install-gcc
+    make install-target-libgcc
+
+A freestanding compiler is useful to have if doing development on these internals and causes no conflicts, so it is not necessary to remove or uninstall it afterwards.
+
+With our freestanding compiler we will compile a very minimal libc. GCC actually requires some minimal functions of libc to be included, even if they do not actually work or do anything. The freestanding compilers are invoked by using `i386-elf-gcc`, `i386-elf-ld`, etc. 
+
+In order to download and compile the minimal libc, use this script:
 
     git clone https://github.com/qtumproject/FsLibc
-    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=cross-toolchain.cmake -DCMAKE_INSTALL_PREFIX=$HOME/x86-toolchain/sysroot/usr .
+    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=cross-toolchain.cmake -DCMAKE_INSTALL_PREFIX=$SYSROOT/usr .
     make -C libc
     make -C libc install
 
-**Caution!!!** Be careful when running `make -C libc install`. If it gives a permission denied error, do NOT use sudo. You most likely made a mistake and it is attempting to overwrite your system's header and library files, which will break your system most likely.
+**CAUTION!!!** Be careful when running `make -C libc install`. If it gives a permission denied error, do NOT use sudo. You most likely made a mistake and it is attempting to overwrite your system's header and library files, which will break your system most likely. Make sure you did everything properly and why you are getting a permission denied error! 
 
-## Preparing sysroot
+We now have a minimal libc that is capable of being used to build our QtumOS GCC. Next, we need to prepare the rest of the sysroot:
 
-The next step after compiling libc is to prepare the sysroot. This can be done by calling prepare_sysroot.h. This will compile the necessary crt files for linking and also creates some header files that libgcc expects to exist. 
+    cd crtfiles
+    make
+    cd ..
+    mkdir -p $SYSROOT/usr/lib
+    mkdir -p $SYSROOT/usr/include
+    cp crtfiles/*.o $SYSROOT/usr/lib/
+    cp -r includes/* $SYSROOT/usr/include/
 
-## Building i386-qtum-gcc
+We now have our crt files used for bootstrapping and other invisible code compiled and into the proper place. Now, we can compile the QtumOS compiler. This is almost exactly like compiling the freestanding compiler.
 
-You must first build binutils. Look in build.sh for a template script to follow. This should probably work, but it is not intended to be perfectly copy-pasteable since systems vary. 
+    #!/bin/bash
+    export PREFIX="$HOME/opt/cross"
+    export TARGET=i386-qtum
+    export PATH="$PREFIX/bin:$PATH"
 
-After building and installing into your PREFIX, you should be able to call `i386-qtum-gcc -v` and get some version information about the compiler. You've done it!
+    rm -r build-binutils
+    mkdir build-binutils
+    cd build-binutils
+    ../binutils-2.29/configure --target=i386-qtum --prefix="$PREFIX" --with-sysroot="$SYSROOT" --disable-werror
+    make
+    make install
+
+    cd ..
+    rm -r build-gcc
+    mkdir build-gcc
+    cd build-gcc
+    ../gcc-7.2.0/configure --target=i386-qtum --prefix="$PREFIX" --with-sysroot="$SYSROOT" --enable-languages=c
+    make all-gcc
+    make all-target-libgcc
+    make install-gcc
+    make install-target-libgcc
+
+Now we have our QtumOS compiler, however if you try to compile a program it will complain with "unable to find libqtum.a" or similar. We need to compile libqtum and place it in our sysroot. This can be done as so (this will be changed later since we will have a separate and full version of libqtum)
+
+    cd libqtum
+    make
+    cd ..
+
+    cp libqtum/libqtum.a $SYSROOT/usr/lib/
+    cp libqtum/include/* $SYSROOT/usr/include/
+
+
+After building and installing into your PREFIX, you should be able to call `i386-qtum-gcc -v` and get some version information about the compiler. And finally, for the full test you should be able to compile a hello world program and it actually compile to a .elf file. 
 
