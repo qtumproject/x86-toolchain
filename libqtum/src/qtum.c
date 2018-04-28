@@ -47,7 +47,7 @@ void setup_terminal_io()
     scr_term.user_ptr = NULL;
 
     // initialize needed streams
-    stdout = &scr_term;
+    //stdout = &scr_term;
 }
 
 void __init_qtum(){

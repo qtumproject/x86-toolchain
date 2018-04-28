@@ -10,6 +10,7 @@ EXTERN __init_qtum
 
 _start:
 ; what to do here?
+mov esp, 0x200000 + 1024 * 6 ; init stack for Qtum stack space
 call _init ;global constructors
 call __init_qtum
 

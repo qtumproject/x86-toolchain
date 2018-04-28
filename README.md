@@ -77,7 +77,7 @@ We now have our crt files used for bootstrapping and other invisible code compil
     export TARGET=i386-qtum
     export PATH="$PREFIX/bin:$PATH"
 
-    rm -r build-binutils
+    rm -rf build-binutils
     mkdir build-binutils
     cd build-binutils
     ../binutils-2.29/configure --target=i386-qtum --prefix="$PREFIX" --with-sysroot="$SYSROOT" --disable-werror
@@ -85,7 +85,7 @@ We now have our crt files used for bootstrapping and other invisible code compil
     make install
 
     cd ..
-    rm -r build-gcc
+    rm -rf build-gcc
     mkdir build-gcc
     cd build-gcc
     ../gcc-7.2.0/configure --target=i386-qtum --prefix="$PREFIX" --with-sysroot="$SYSROOT" --enable-languages=c

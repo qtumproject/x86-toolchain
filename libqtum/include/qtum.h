@@ -48,4 +48,8 @@ static uint8_t inb(uint16_t port)
 //called internally to initialize libc, etc
 void __init_qtum();
 
+
+long __qtum_syscall(long number, long p1, long p2, long p3, long p4, long p5, long p6);
+
+
 #endif
