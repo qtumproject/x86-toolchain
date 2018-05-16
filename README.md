@@ -41,7 +41,7 @@ In order to compile the minimal versions of libc, a freestanding generic compile
     cd ..
     mkdir build-gcc
     cd build-gcc
-    ../gcc-7.2.0/configure --target="$TARGET" --prefix="$PREFIX" --enable-languages=c
+    ../gcc-7.2.0/configure --target="$TARGET" --prefix="$PREFIX" --enable-languages=c,c++
     make all-gcc
     make all-target-libgcc
     make install-gcc
