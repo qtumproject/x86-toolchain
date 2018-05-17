@@ -99,10 +99,8 @@ Now we have our QtumOS compiler, however if you try to compile a program it will
     git clone https://github.com/qtumproject/libqtum
     cd libqtum
     make
-    cd ..
-
-    cp libqtum/libqtum.a $SYSROOT/usr/lib/
-    cp libqtum/include/* $SYSROOT/usr/include/
+    # Warning! Do not use sudo! 
+    make deploy
 
 
 After building and installing into your PREFIX, you should be able to call `i386-qtum-gcc -v` and get some version information about the compiler. And finally, for the full test you should be able to compile a hello world program and it actually compile to a .elf file. 
