@@ -96,6 +96,7 @@ We now have our crt files used for bootstrapping and other invisible code compil
 
 Now we have our QtumOS compiler, however if you try to compile a program it will complain with "unable to find libqtum.a" or similar. We need to compile libqtum and place it in our sysroot. This can be done as so (this will be changed later since we will have a separate and full version of libqtum)
 
+    git clone https://github.com/qtumproject/libqtum
     cd libqtum
     make
     cd ..
