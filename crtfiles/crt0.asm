@@ -7,7 +7,7 @@ EXTERN _init
 EXTERN _exit_crt
 EXTERN main
 EXTERN __init_qtum
-EXTERN _onCreate
+EXTERN onCreate
 
 _start:
 ; what to do here?
@@ -31,7 +31,8 @@ hlt
 
 callCreate:
 
-call _onCreate
+mov eax, 0
+call onCreate
 cmp eax, 0
 jne exit ;error code, so exit with error
 jmp callMain
