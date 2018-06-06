@@ -105,3 +105,37 @@ Now we have our QtumOS compiler, however if you try to compile a program it will
 
 After building and installing into your PREFIX, you should be able to call `i386-qtum-gcc -v` and get some version information about the compiler. And finally, for the full test you should be able to compile a hello world program and it actually compile to a .elf file. 
 
+
+Example contract program:
+
+    #include <qtum.h>
+    #include <stdlib.h>
+    #include <string.h>
+
+    //__qtum_syscall(0x40, INTERNAL_PRINT, stringlen, stringptr, ... );
+    #define INTERNAL_PRINT 0xFFFF0001
+
+    char* data="Hello World!!";
+    char* createmsg = "onCreate";
+    char* callmsg = "call received";
+
+    //expected result upon creation: onCreate Hello World!! Fello World!!
+    //expected result upon call: call received Hello World!! Fello World!!
+
+    int onCreate(){
+        __qtum_syscall(INTERNAL_PRINT, (long) createmsg, strlen(createmsg), 0, 0, 0, 0);
+        return 0;
+    }
+
+    int main(){
+        if(!isCreate){
+            __qtum_syscall(INTERNAL_PRINT, (long) callmsg, strlen(callmsg), 0, 0, 0, 0);
+        }
+        __qtum_syscall(INTERNAL_PRINT, (long) data, 13, 0, 0, 0, 0);
+        char foo[14];
+        memcpy(foo, data, 14);
+        foo[0] = 'F';
+        __qtum_syscall(INTERNAL_PRINT, (long) foo, 13, 0, 0, 0, 0);
+        return 0;
+    }
+
