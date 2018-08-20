@@ -25,15 +25,14 @@ mov eax, 0
 call main ;main function
 
 exit:
-pop eax ;get return code
+; eax is return code
 int 0xF0 ; VM escape API for ending execution
-hlt
+hlt ; should never reach this
 
 callCreate:
-
 mov eax, 0
 call onCreate
-cmp eax, 0
-jne exit ;error code, so exit with error
+cmp eax, 0 
+jne exit ;exit if not zero (no error)
 jmp callMain
 
