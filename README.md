@@ -1,12 +1,10 @@
 # Toolchain targeted for Qtum's x86 VM
 
-This is a GNU GCC and friends toolchain modified to support the "i386-qtum" target. This means that after building this, it is possible to simply do:
+This is a GNU GCC and friends toolchain modified to support the "i686-qtum" target. This means that after building this, it is possible to simply do:
 
-    i386-qtum-gcc test.c -o contract
+    i686-qtum-gcc test.c -o contract
 
 And the "contract" file that is outputed will be capable of being used with the x86Lib testbench program (and later deployed to Qtum's blockchain)
-
-Note: even though x86Lib will later support i686, right now there is only i386 support.. so only target this! 
 
 Resources:
 
@@ -29,7 +27,7 @@ In order to compile the minimal versions of libc, a freestanding generic compile
 
     #!/bin/bash
     export PREFIX="$HOME/opt/cross"
-    export TARGET=i386-elf
+    export TARGET=i686-elf
     export PATH="$PREFIX/bin:$PATH"
     export SYSROOT="$HOME/x86-compiler/sysroot" #change if needed
 
@@ -49,7 +47,7 @@ In order to compile the minimal versions of libc, a freestanding generic compile
 
 A freestanding compiler is useful to have if doing development on these internals and causes no conflicts, so it is not necessary to remove or uninstall it afterwards.
 
-With our freestanding compiler we will compile a very minimal libc. GCC actually requires some minimal functions of libc to be included, even if they do not actually work or do anything. The freestanding compilers are invoked by using `i386-elf-gcc`, `i386-elf-ld`, etc. 
+With our freestanding compiler we will compile a very minimal libc. GCC actually requires some minimal functions of libc to be included, even if they do not actually work or do anything. The freestanding compilers are invoked by using `i686-elf-gcc`, `i686-elf-ld`, etc. 
 
 In order to download and compile the minimal libc, use this script:
 
@@ -74,13 +72,13 @@ We now have our crt files used for bootstrapping and other invisible code compil
 
     #!/bin/bash
     export PREFIX="$HOME/opt/cross"
-    export TARGET=i386-qtum
+    export TARGET=i686-qtum
     export PATH="$PREFIX/bin:$PATH"
 
     rm -rf build-binutils
     mkdir build-binutils
     cd build-binutils
-    ../binutils-2.29/configure --target=i386-qtum --prefix="$PREFIX" --with-sysroot="$SYSROOT" --disable-werror
+    ../binutils-2.29/configure --target=$TARGET --prefix="$PREFIX" --with-sysroot="$SYSROOT" --disable-werror
     make
     make install
 
@@ -88,7 +86,7 @@ We now have our crt files used for bootstrapping and other invisible code compil
     rm -rf build-gcc
     mkdir build-gcc
     cd build-gcc
-    ../gcc-7.2.0/configure --target=i386-qtum --prefix="$PREFIX" --with-sysroot="$SYSROOT" --enable-languages=c
+    ../gcc-7.2.0/configure --target=$TARGET --prefix="$PREFIX" --with-sysroot="$SYSROOT" --enable-languages=c
     make all-gcc
     make all-target-libgcc
     make install-gcc
