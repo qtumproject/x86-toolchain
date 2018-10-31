@@ -10,13 +10,11 @@ EXTERN __init_qtum
 EXTERN onCreate
 
 _start:
-; what to do here?
 mov esp, 0x200000 + 1024 * 6 ; init stack for Qtum stack space
 call _init ;global constructors
-call __init_qtum
+call __init_qtum ;internal libqtum setup
 
-mov eax, 6 ; IsCreate syscall
-int 0x40
+mov eax, [0xD0000004] ;ExecDataABI.isCreate
 cmp eax, 1
 je callCreate
 
@@ -32,7 +30,5 @@ hlt ; should never reach this
 callCreate:
 mov eax, 0
 call onCreate
-cmp eax, 0 
-jne exit ;exit if not zero (no error)
-jmp callMain
+jmp exit
 
