@@ -12,4 +12,4 @@ GLOBAL _fini
 _fini:
    push ebp
    mov ebp, esp
-; gcc will nicely put the contents of crtbegin.o's .fini section here. */
+; gcc will nicely put the contents of crtbegin.o's .fini section here.

@@ -86,7 +86,7 @@ We now have our crt files used for bootstrapping and other invisible code compil
     rm -rf build-gcc
     mkdir build-gcc
     cd build-gcc
-    ../gcc-7.2.0/configure --target=$TARGET --prefix="$PREFIX" --with-sysroot="$SYSROOT" --enable-languages=c
+    ../gcc-7.2.0/configure --target=$TARGET --prefix="$PREFIX" --with-sysroot="$SYSROOT" --enable-languages=c,c++
     make all-gcc
     make all-target-libgcc
     make install-gcc
