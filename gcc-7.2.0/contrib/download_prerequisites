@@ -41,17 +41,34 @@ echo_archives() {
     if [ ${graphite} -gt 0 ]; then echo "${isl}"; fi
 }
 
+read_os() {
+    if test -r /etc/os-release
+    then
+        clearenv setenv "$1" "$2" read-conf /etc/os-release "`command -v printenv`" "$1"
+    else
+        clearenv setenv "$1" "$2" read-conf /usr/lib/os-release "`command -v printenv`" "$1"
+    fi
+}
+
 graphite=1
 verify=1
 force=0
 OS=$(uname)
+Id=$(awk -F= '$1=="ID" { print $2 ;}' /etc/os-release)
 
 case $OS in
   "Darwin")
     chksum='shasum -a 512 --check'
   ;;
   *)
-    chksum='sha512sum --check'
+    case $Id in 
+    "alpine")
+        chksum='shasum -c'
+    ;;
+    *)
+        chksum='sha512sum --check'
+    ;;
+    esac
   ;;
 esac
 
